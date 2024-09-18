@@ -4,10 +4,8 @@ import pandas as pd
 
 from tqdm.auto import tqdm
 
-import transformers
 import torch
 import torch.nn as nn
-import torchmetrics
 import pytorch_lightning as pl
 from module.dataset import Dataloader
 ## 맞춤법검사전처리.
