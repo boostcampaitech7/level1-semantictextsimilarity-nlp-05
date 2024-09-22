@@ -65,7 +65,9 @@ class Model(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.lr)
-        return optimizer
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=8, 
+                                                                 T_mult=1, eta_min=5e-6)
+        return [optimizer], [scheduler]
     
 
     
