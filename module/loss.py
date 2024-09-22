@@ -27,4 +27,16 @@ class CombinedMSEPearsonLoss(nn.Module):
         mse = self.MSE_loss(predictions, targets)
         pearson = self.pearson_loss(predictions, targets)
         return self.alpha * mse + (1 - self.alpha) * pearson
+    
+class CombinedL1PearsonLoss(nn.Module):
+    def __init__(self, alpha=0.5):
+        super().__init__()
+        self.alpha = alpha
+        self.L1_loss = nn.L1Loss()
+        self.pearson_loss = PearsonCorrelationLoss()
+
+    def forward(self, predictions, targets):
+        l1 = self.L1_loss(predictions, targets)
+        pearson = self.pearson_loss(predictions, targets)
+        return self.alpha * l1 + (1 - self.alpha) * pearson
 ######################
