@@ -56,6 +56,14 @@ class Dataloader(pl.LightningDataModule):
             data.append(outputs['input_ids'])
         return data
 
+    def token_add(self,tokens: list) -> None:
+        current_vocab = set(self.tokenizer.vocab.keys())
+
+        new_tokens = [token for token in tokens if token not in current_vocab]
+
+        if new_tokens:
+            self.tokenizer.add_tokens(new_tokens)
+
     def preprocessing(self, data):
         # 안쓰는 컬럼을 삭제합니다.
         data = data.drop(columns=self.delete_columns)
