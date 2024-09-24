@@ -142,7 +142,6 @@ test.ipynb
 *.csv
 *.json
 *.txt
-*.toml
 #requirements
 !requirements.txt
 # logs
@@ -152,4 +151,3 @@ lightning_logs
 wandb/
 
 config.yaml
-Makefile
