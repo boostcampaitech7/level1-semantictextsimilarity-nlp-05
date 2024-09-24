@@ -2,11 +2,11 @@ import random
 
 import pytorch_lightning as pl
 import torch
+import wandb
 import yaml
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 
-import wandb
 from module.dataset import Dataloader
 from module.model import Model, MultitaksModel
 
