@@ -150,7 +150,7 @@ class MultitaksModel(pl.LightningModule):
         logits = self(x)
         classification_pred = torch.argmax(logits['classification'], dim=1)
         similarity_loss = self.similarity_loss(logits['similarity'], similarity_y.float())
-        classification_loss = self.classification_loss(logits['classification'], classification_y)
+        classification_loss = self.classification_loss(logits['classification'], classification_y.long())
         loss = similarity_loss * self.similarity_weight + classification_loss * self.classification_weight
 
         self.log("similarity_test_pearson", self.similarity_metric(logits['similarity'], similarity_y.squeeze()))
