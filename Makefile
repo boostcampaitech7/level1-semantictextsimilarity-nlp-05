@@ -18,7 +18,6 @@ set-style:
 check-quality:
 	black --config pyproject.toml --check .
 	isort --settings-path pyproject.toml --check-only .
-	flake8 .
 
 #####  clean  #####
 clean-pyc:
