@@ -1,0 +1,18 @@
+data:
+  dev_path: ./data/val_preprocessed.csv
+  model_path: ./save_model/klue-roberta-small_Batch-size:16_Max-epochs:1/model.pt
+  output_path: ./output/
+  predict_path: ./data/test_preprocessed.csv
+  save_path: null
+  submission_path: ./data/sample_submission.csv
+  test_path: ./data/val_preprocessed.csv
+  train_path: ./data/train_preprocessed_augmented.csv
+model:
+  model_name: klue/roberta-small
+train:
+  batch_size: 16
+  learning_rate: 1e-5
+  loss_function: MSE
+  max_epochs: 1
+  multi_task: false
+  shuffle: true
