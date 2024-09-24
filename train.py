@@ -37,9 +37,7 @@ if __name__ == "__main__":
     save_path = f"./save_model/{model_name.replace('/','-')}_Batch-size:{batch_size}_Max-epochs:{max_epoch}/"
     config["data"]["model_path"] = save_path + "model.pt"
 
-    early_stopping_callbacks = EarlyStopping(
-        monitor="val_pearson", patience=7, mode="max"
-    )
+    early_stopping_callbacks = EarlyStopping(monitor="val_pearson", patience=7, mode="max")
     model_checkpoint_callbacks = ModelCheckpoint(
         monitor="val_pearson",
         dirpath=save_path,

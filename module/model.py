@@ -71,9 +71,7 @@ class Model(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.lr)
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
-            optimizer, T_0=8, T_mult=1, eta_min=1e-6
-        )
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=8, T_mult=1, eta_min=1e-6)
         return {
             "optimizer": optimizer,
             "lr_scheduler": {"scheduler": scheduler, "interval": "step"},
@@ -113,16 +111,9 @@ class MultitaksModel(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         x, similarity_y, classification_y = batch
         logits = self(x)
-        similarity_loss = self.similarity_loss(
-            logits["similarity"], similarity_y.float()
-        )
-        classification_loss = self.classification_loss(
-            logits["classification"], classification_y.long()
-        )
-        loss = (
-            similarity_loss * self.similarity_weight
-            + classification_loss * self.classification_weight
-        )
+        similarity_loss = self.similarity_loss(logits["similarity"], similarity_y.float())
+        classification_loss = self.classification_loss(logits["classification"], classification_y.long())
+        loss = similarity_loss * self.similarity_weight + classification_loss * self.classification_weight
 
         self.log("similarity_train_loss", similarity_loss)
         self.log("classification_train_loss", classification_loss)
@@ -134,16 +125,9 @@ class MultitaksModel(pl.LightningModule):
         x, similarity_y, classification_y = batch
         logits = self(x)
         classification_pred = torch.argmax(logits["classification"], dim=1)
-        similarity_loss = self.similarity_loss(
-            logits["similarity"], similarity_y.float()
-        )
-        classification_loss = self.classification_loss(
-            logits["classification"], classification_y.long()
-        )
-        loss = (
-            similarity_loss * self.similarity_weight
-            + classification_loss * self.classification_weight
-        )
+        similarity_loss = self.similarity_loss(logits["similarity"], similarity_y.float())
+        classification_loss = self.classification_loss(logits["classification"], classification_y.long())
+        loss = similarity_loss * self.similarity_weight + classification_loss * self.classification_weight
 
         self.log("similarity_val_loss", similarity_loss)
         self.log("classification_val_loss", classification_loss)
@@ -179,9 +163,7 @@ class MultitaksModel(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = torch.optim.AdamW(self.parameters(), lr=self.lr)
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
-            optimizer, T_0=8, T_mult=1, eta_min=1e-6
-        )
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, T_0=8, T_mult=1, eta_min=1e-6)
         return {
             "optimizer": optimizer,
             "lr_scheduler": {"scheduler": scheduler, "interval": "step"},
