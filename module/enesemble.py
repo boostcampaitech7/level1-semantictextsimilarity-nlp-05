@@ -16,11 +16,7 @@ df4.drop(columns=["id"], inplace=True)
 df5.drop(columns=["id"], inplace=True)
 
 df_ensemble["target"] = (
-    0.2 * df1["target"]
-    + 0.2 * df2["target"]
-    + 0.1 * df3["target"]
-    + 0.3 * df4["target"]
-    + 0.2 * df5["target"]
+    0.2 * df1["target"] + 0.2 * df2["target"] + 0.1 * df3["target"] + 0.3 * df4["target"] + 0.2 * df5["target"]
 )
 
 df_ensemble.to_csv("submission_ensemble.csv", index=False)

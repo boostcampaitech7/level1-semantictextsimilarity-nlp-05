@@ -58,9 +58,7 @@ class Dataloader(pl.LightningDataModule):
         self.test_dataset = None
         self.predict_dataset = None
 
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(
-            model_name, max_length=160
-        )
+        self.tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, max_length=160)
         self.target_columns = ["label"]
         self.multi_task = multi_task
         if self.multi_task:
@@ -70,13 +68,9 @@ class Dataloader(pl.LightningDataModule):
 
     def tokenizing(self, dataframe):
         data = []
-        for idx, item in tqdm(
-            dataframe.iterrows(), desc="tokenizing", total=len(dataframe)
-        ):
+        for idx, item in tqdm(dataframe.iterrows(), desc="tokenizing", total=len(dataframe)):
             # 두 입력 문장을 [SEP] 토큰으로 이어붙여서 전처리합니다.
-            text = "[SEP]".join(
-                [item[text_column] for text_column in self.text_columns]
-            )
+            text = "[SEP]".join([item[text_column] for text_column in self.text_columns])
             outputs = self.tokenizer(
                 text,
                 add_special_tokens=True,
@@ -138,19 +132,13 @@ class Dataloader(pl.LightningDataModule):
 
     def train_dataloader(self):
         # return torch.utils.data.DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=args.shuffle)
-        return torch.utils.data.DataLoader(
-            self.train_dataset, batch_size=self.batch_size, shuffle=self.shuffle
-        )
+        return torch.utils.data.DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=self.shuffle)
 
     def val_dataloader(self):
         return torch.utils.data.DataLoader(self.val_dataset, batch_size=self.batch_size)
 
     def test_dataloader(self):
-        return torch.utils.data.DataLoader(
-            self.test_dataset, batch_size=self.batch_size
-        )
+        return torch.utils.data.DataLoader(self.test_dataset, batch_size=self.batch_size)
 
     def predict_dataloader(self):
-        return torch.utils.data.DataLoader(
-            self.predict_dataset, batch_size=self.batch_size
-        )
+        return torch.utils.data.DataLoader(self.predict_dataset, batch_size=self.batch_size)

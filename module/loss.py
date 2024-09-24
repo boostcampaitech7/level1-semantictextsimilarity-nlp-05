@@ -13,9 +13,7 @@ class PearsonCorrelationLoss(nn.Module):
         vx = x - torch.mean(x)
         vy = y - torch.mean(y)
 
-        cost = torch.sum(vx * vy) / (
-            torch.sqrt(torch.sum(vx**2)) * torch.sqrt(torch.sum(vy**2))
-        )
+        cost = torch.sum(vx * vy) / (torch.sqrt(torch.sum(vx**2)) * torch.sqrt(torch.sum(vy**2)))
         return 1 - cost
 
 
