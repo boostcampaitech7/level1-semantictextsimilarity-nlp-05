@@ -142,6 +142,8 @@ test.ipynb
 *.csv
 *.json
 *.txt
+
+#requirements
 !requirements.txt
 # logs
 *.log
