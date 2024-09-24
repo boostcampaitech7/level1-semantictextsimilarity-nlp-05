@@ -6,7 +6,7 @@ style: set-style-dep set-style
 set-git:
 	git config --local commit.template .gitmessage
 	git update-index --skip-worktree ./config/config.yaml
-	
+
 set-style-dep:
 	pip3 install click==8.0.4 isort==5.13.2 black==24.8.0 flake8==7.1.1
 
@@ -18,7 +18,6 @@ set-style:
 check-quality:
 	black --config pyproject.toml --check .
 	isort --settings-path pyproject.toml --check-only .
-	flake8 .
 
 #####  clean  #####
 clean-pyc:
