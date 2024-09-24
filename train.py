@@ -1,5 +1,6 @@
 import argparse
 import random
+import yaml
 
 import torch
 import pytorch_lightning as pl
@@ -18,24 +19,28 @@ random.seed(0)
 
 
 if __name__ == '__main__':
-    # 하이퍼 파라미터 등 각종 설정값을 입력받습니다
-    # 터미널 실행 예시 : python3 run.py --batch_size=64 ...
-    # 실행 시 '--batch_size=64' 같은 인자를 입력하지 않으면 default 값이 기본으로 실행됩니다
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--model_name', default='klue/roberta-base', type=str)
-    parser.add_argument('--batch_size', default=128, type=int)
-    parser.add_argument('--max_epoch', default=10, type=int)
-    parser.add_argument('--shuffle', default=True)
-    parser.add_argument('--learning_rate', default=1e-5, type=float)
-    parser.add_argument('--train_path', default='./data/train_preprocessed_augmented.csv')
-    parser.add_argument('--loss_function', default='MSE')
-    parser.add_argument('--dev_path', default='./data/val_preprocessed.csv')
-    parser.add_argument('--test_path', default='./data/val_preprocessed.csv')
-    parser.add_argument('--predict_path', default='../test.csv')
-    parser.add_argument('--multi_task', default=True)
-    args = parser.parse_args(args=[])
+    
+    with open('config/config.yaml') as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
 
-    save_path = f"save_model/{args.model_name.replace('/','-')}_Batch-size:{args.batch_size}_Max-epochs:{args.max_epoch}/"
+    model_name = config['model']['model_name']
+    batch_size = config['train']['batch_size']
+    max_epoch = config['train']['max_epochs']
+    shuffle = config['train']['shuffle']
+    learning_rate = float(config['train']['learning_rate'])
+    train_path = config['data']['train_path']
+    dev_path = config['data']['dev_path']
+    test_path = config['data']['test_path']
+    predict_path = config['data']['predict_path']
+    loss_function = config['train']['loss_function']
+    multi_task = config['train']['multi_task']
+
+
+
+    save_path = f"./save_model/{model_name.replace('/','-')}_Batch-size:{batch_size}_Max-epochs:{max_epoch}/"
+    config['data']['model_path'] = save_path + 'model.pt'
+
+    
 
     early_stopping_callbacks = EarlyStopping(
         monitor = 'val_pearson',
@@ -52,35 +57,36 @@ if __name__ == '__main__':
 
     
     wandblogger = WandbLogger(project="STSporj",
-                              name = f"{args.model_name.replace('/','-')}//loss_func:{args.loss_function}//batch_size:{args.batch_size}")
+                              name = f"{model_name.replace('/','-')}//loss_func:{loss_function}//batch_size:{batch_size}//Multi_task:{multi_task}")
 
     # dataloader와 model을 생성합니다.
-    dataloader = Dataloader(args.model_name, args.batch_size, args.shuffle, args.train_path, args.dev_path,
-                            args.test_path, args.predict_path, args.multi_task)
+    dataloader = Dataloader(model_name, batch_size, shuffle, train_path, dev_path,
+                            test_path, predict_path, multi_task)
     
     #<person> token 추가.
     person_token = ['<person>']
     dataloader.token_add(person_token)
 
-    if args.multi_task:
+    if multi_task:
         weight = 0.7
-        model = MultitaksModel(args.model_name, args.learning_rate,args.loss_function,weight)
+        model = MultitaksModel(model_name, learning_rate,loss_function,weight)
         model.encoder.resize_token_embeddings(len(dataloader.tokenizer))
     else:
-        model = Model(args.model_name, args.learning_rate,args.loss_function)
+        model = Model(model_name, learning_rate,loss_function)
         model.plm.resize_token_embeddings(len(dataloader.tokenizer))
     
     
     
     
     
-    
+    with open('config/config.yaml', 'w') as f:
+        yaml.dump(config, f)
     
     # gpu가 없으면 accelerator="cpu"로 변경해주세요, gpu가 여러개면 'devices=4'처럼 사용하실 gpu의 개수를 입력해주세요
     trainer = pl.Trainer(
         accelerator="gpu", 
         devices=1, 
-        max_epochs=args.max_epoch, 
+        max_epochs=max_epoch, 
         log_every_n_steps=1,
         callbacks= [early_stopping_callbacks,model_checkpoint_callbacks],
         logger = wandblogger

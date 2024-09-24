@@ -8,19 +8,22 @@ import pytorch_lightning as pl
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, inputs, targets):
+    def __init__(self, inputs, targets,multi_task=False):
         self.inputs = inputs
         self.targets = targets
-
+        self.multi_task = multi_task
     # 학습 및 추론 과정에서 데이터를 1개씩 꺼내오는 곳
     def __getitem__(self, idx):
         # 정답이 있다면 else문을, 없다면 if문을 수행합니다
-        if self.targets is None:
+        if len(self.targets) == 0:
             return torch.tensor(self.inputs[idx])
         else:
-            return (torch.tensor(self.inputs[idx]), 
-                    torch.tensor(self.targets[0][idx]), 
-                    torch.tensor(self.targets[1][idx]))
+            if self.multi_task:
+                return (torch.tensor(self.inputs[idx]), 
+                        torch.tensor(self.targets[0][idx]), 
+                        torch.tensor(self.targets[1][idx]))
+            else:
+                return torch.tensor(self.inputs[idx]), torch.tensor(self.targets[idx])
 
     # 입력하는 개수만큼 데이터를 사용합니다
     def __len__(self):
@@ -28,7 +31,7 @@ class Dataset(torch.utils.data.Dataset):
 
 
 class Dataloader(pl.LightningDataModule):
-    def __init__(self, model_name, batch_size, shuffle, train_path, dev_path, test_path, predict_path, multi_task=False):
+    def __init__(self, model_name, batch_size, shuffle, train_path, dev_path, test_path, predict_path, multi_task):
         super().__init__()
         self.model_name = model_name
         self.batch_size = batch_size
@@ -98,17 +101,17 @@ class Dataloader(pl.LightningDataModule):
             val_inputs, val_targets = self.preprocessing(val_data)
 
             # train 데이터만 shuffle을 적용해줍니다, 필요하다면 val, test 데이터에도 shuffle을 적용할 수 있습니다
-            self.train_dataset = Dataset(train_inputs, train_targets)
-            self.val_dataset = Dataset(val_inputs, val_targets)
+            self.train_dataset = Dataset(train_inputs, train_targets,self.multi_task)
+            self.val_dataset = Dataset(val_inputs, val_targets,self.multi_task)
         else:
             # 평가데이터 준비
             test_data = pd.read_csv(self.test_path)
             test_inputs, test_targets = self.preprocessing(test_data)
-            self.test_dataset = Dataset(test_inputs, test_targets)
+            self.test_dataset = Dataset(test_inputs, test_targets,self.multi_task)
 
             predict_data = pd.read_csv(self.predict_path)
             predict_inputs, predict_targets = self.preprocessing(predict_data)
-            self.predict_dataset = Dataset(predict_inputs, [])
+            self.predict_dataset = Dataset(predict_inputs, [],self.multi_task)
 
     def train_dataloader(self):
         #return torch.utils.data.DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=args.shuffle)
