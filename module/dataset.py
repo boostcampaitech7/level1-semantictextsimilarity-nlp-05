@@ -8,17 +8,19 @@ import pytorch_lightning as pl
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, inputs, targets=[]):
+    def __init__(self, inputs, targets):
         self.inputs = inputs
         self.targets = targets
 
     # 학습 및 추론 과정에서 데이터를 1개씩 꺼내오는 곳
     def __getitem__(self, idx):
         # 정답이 있다면 else문을, 없다면 if문을 수행합니다
-        if len(self.targets) == 0:
+        if self.targets is None:
             return torch.tensor(self.inputs[idx])
         else:
-            return torch.tensor(self.inputs[idx]), torch.tensor(self.targets[idx])
+            return (torch.tensor(self.inputs[idx]), 
+                    torch.tensor(self.targets[0][idx]), 
+                    torch.tensor(self.targets[1][idx]))
 
     # 입력하는 개수만큼 데이터를 사용합니다
     def __len__(self):
@@ -26,7 +28,7 @@ class Dataset(torch.utils.data.Dataset):
 
 
 class Dataloader(pl.LightningDataModule):
-    def __init__(self, model_name, batch_size, shuffle, train_path, dev_path, test_path, predict_path):
+    def __init__(self, model_name, batch_size, shuffle, train_path, dev_path, test_path, predict_path, multi_task=False):
         super().__init__()
         self.model_name = model_name
         self.batch_size = batch_size
@@ -44,6 +46,9 @@ class Dataloader(pl.LightningDataModule):
 
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(model_name, max_length=160)
         self.target_columns = ['label']
+        self.multi_task = multi_task
+        if self.multi_task:
+            self.target_columns2 = ['label','binary-label']
         self.delete_columns = ['id']
         self.text_columns = ['sentence_1', 'sentence_2']
 
@@ -52,7 +57,7 @@ class Dataloader(pl.LightningDataModule):
         for idx, item in tqdm(dataframe.iterrows(), desc='tokenizing', total=len(dataframe)):
             # 두 입력 문장을 [SEP] 토큰으로 이어붙여서 전처리합니다.
             text = '[SEP]'.join([item[text_column] for text_column in self.text_columns])
-            outputs = self.tokenizer(text, add_special_tokens=True, padding='max_length', truncation=True)
+            outputs = self.tokenizer(text, add_special_tokens=True, padding='max_length', max_length = 160,truncation=True)
             data.append(outputs['input_ids'])
         return data
 
@@ -71,6 +76,8 @@ class Dataloader(pl.LightningDataModule):
         # 타겟 데이터가 없으면 빈 배열을 리턴합니다.
         try:
             targets = data[self.target_columns].values.tolist()
+            if self.multi_task:
+                targets = [data[col].values.tolist() for col in self.target_columns2]
         except:
             targets = []
         # 텍스트 데이터를 전처리합니다.
