@@ -1,1 +1,1 @@
-# Level 1, STS project
+# Level 1. STS project
