@@ -34,7 +34,7 @@ if __name__ == "__main__":
     loss_function = config["train"]["loss_function"]
     multi_task = config["train"]["multi_task"]
 
-    save_path = f"./save_model/{model_name.replace('/','-')}_Batch-size:{batch_size}_Max-epochs:{max_epoch}/"
+    save_path = f"./save_model/{model_name.replace('/','-')}_Batch-size:{batch_size}_Max-epochs:{max_epoch}_Multi-task:{multi_task}/"
     config["data"]["model_path"] = save_path + "model.pt"
 
     early_stopping_callbacks = EarlyStopping(monitor="val_pearson", patience=7, mode="max")
