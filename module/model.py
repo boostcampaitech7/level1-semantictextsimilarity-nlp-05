@@ -29,43 +29,36 @@ class Model(pl.LightningModule):
 
         self.loss_func = LOSS_FUNCTION[loss_function]
 
-    def forward(self, x):
-        x = self.plm(x)["logits"]
+    def forward(self, x, segment_ids, attention_mask):  # segment_ids, attention_mask 추가
+        outputs = self.plm(input_ids=x, token_type_ids=segment_ids, attention_mask=attention_mask)
 
-        return x
+        return outputs["logits"]
 
     def training_step(self, batch, batch_idx):
-        x, y = batch
-        logits = self(x)
+        x, segment_ids, attention_mask, y = batch  # attention_mask 추가
+        logits = self(x, segment_ids, attention_mask)  # attention_mask 전달
         loss = self.loss_func(logits, y.float())
         self.log("train_loss", loss)
 
         return loss
 
     def validation_step(self, batch, batch_idx):
-        x, y = batch
-        logits = self(x)
+        x, segment_ids, attention_mask, y = batch  # attention_mask 추가
+        logits = self(x, segment_ids, attention_mask)  # attention_mask 전달
         loss = self.loss_func(logits, y.float())
         self.log("val_loss", loss)
-        self.log(
-            "val_pearson",
-            torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze()),
-        )
+        self.log("val_pearson", torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze()))
 
         return loss
 
     def test_step(self, batch, batch_idx):
-        x, y = batch
-        logits = self(x)
-
-        self.log(
-            "test_pearson",
-            torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze()),
-        )
+        x, segment_ids, attention_mask, y = batch  # attention_mask 추가
+        logits = self(x, segment_ids, attention_mask)  # attention_mask 전달
+        self.log("test_pearson", torchmetrics.functional.pearson_corrcoef(logits.squeeze(), y.squeeze()))
 
     def predict_step(self, batch, batch_idx):
-        x = batch
-        logits = self(x)
+        x, segment_ids, attention_mask = batch  # attention_mask 추가
+        logits = self(x, segment_ids, attention_mask)  # attention_mask 전달
 
         return logits.squeeze()
 
