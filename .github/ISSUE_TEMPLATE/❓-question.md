@@ -1,5 +1,5 @@
 ---
-name: "❓ question"
+name: "❓ Question"
 about: "Ask a question about this project \U0001F393"
 title: ''
 labels: ''
