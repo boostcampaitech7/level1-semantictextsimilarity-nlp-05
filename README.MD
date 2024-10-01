@@ -111,7 +111,7 @@
   <img src='img/image-4.jpeg' width='250'>
 </p>
 
-### [하위 레이어를 활용하여 Fine-tuning](https://github.com/boostcampaitech7/level1-semantictextsimilarity-nlp-05/blob/JWS/module/model.py)
+### [하위 레이어를 활용하여 Fine-tuning](https://github.com/boostcampaitech7/level1-semantictextsimilarity-nlp-05/blob/JWS/module/layer_aggregated_similarity_model.py)
 
 - 하위 레이어를 활용하면 단어 단위의 세부 정보를 통해 유사도 측정에 도움이 될 것이라 생각하고, 각 레이어의 시퀀스 임베딩을 평균해 CNN으로 가중합하여 Head 입력으로 사용하였다. 그 결과 하위 레이어를 이용한 fine-tuning으로 train과 val loss가 감소하면서 소폭 상승을 얻었고, 이미 상세한 정보가 담긴 BERT 인코더 덕분에 큰 상승은 없었지만 하위 정보를 활용해 점수를 조금 상승시킬 수 있었다.
 
