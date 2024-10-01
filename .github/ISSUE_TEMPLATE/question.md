@@ -1,5 +1,5 @@
 ---
-name: ❓ Question
+name: ❓ question
 about: Ask a question about this project 🎓
 title: ""
 labels: question
