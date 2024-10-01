@@ -66,7 +66,7 @@
 ### 프로젝트 구조
 
 <p align='center'>
-  <img src='img/image-2.jpeg' width='500'>
+  <img src='img/image-2.jpeg' width='450'>
 </p
 
 ### 모델 분석 및 성능 개선
@@ -108,7 +108,7 @@
 - binary-label을 학습에 활용하고자 model의 아웃풋인 [CLS] 임베딩을 label을 예측하는 regression 모델에 입력하고, 동시에 binary-label을 예측하는 classification 모델에 입력해 두개의 아웃풋에 대해 각각의 loss를 구한 후 더한 최종 Loss를 이용해 전체를 학습하였다. 그 결과 pearson 점수의 상승은 미미했으나 학습 수렴속도는 증가하였다.
 
 <p align='center'>
-  <img src='img/image-4.jpeg' width='300'>
+  <img src='img/image-4.jpeg' width='250'>
 </p>
 
 ### 하위 레이어를 활용하여 Fine-tuning
@@ -127,14 +127,14 @@
 
 
 <p align='center'>
-  <img src='img/image-6.jpeg' width='900'>
+  <img src='img/image-6.jpeg' width='800'>
 </p>
 
 - 모델별 pearson 점수는 다음과 같다. 상단 두개의 모델은 multi-task learning으로 binary-label에 대한 classification acc도 확인 가능하다.
 
 
 <p align='center'>
-  <img src='img/image-7.jpeg' width='800'>
+  <img src='img/image-7.jpeg' width='650'>
 </p>
 
 ### 모델 별 일부 데이터에 대한 test set 그래프
@@ -142,7 +142,7 @@
 - 대체로 유사하게 예측되나 예측이 갈리는 것들에 대해서는 앙상블을 통해 결과가 개선될 수 있을 것으로 예상된다.
 
 <p align='center'>
-  <img src='img/image-8.jpeg' width='900'>
+  <img src='img/image-8.jpeg' width='800'>
 </p>
 
 ### 모델 성능 및 선정
@@ -169,11 +169,11 @@
 - 리더보드 [중간 순위]
 
 <p align='center'>
-  <img src='img/result-1.jpeg' width='900'>
+  <img src='img/result-1.jpeg' width='800'>
 </p>
     
 - 리더보드 [최종 순위]
 
 <p align='center'>
-  <img src='img/result-2.jpeg' width='900'>
+  <img src='img/result-2.jpeg' width='800'>
 </p>
