@@ -63,13 +63,13 @@
 
 ### 프로젝트 구조
 
-<img src='img/image-2.jpeg'></img>    
+<img src='img/image-2.jpeg' width=400></img>    
 
 ### 모델 분석 및 성능 개선
 
 - 모델 별 [UNK] tokenize 분석
 
-<img src='img/image-3.jpeg'></img>    
+<img src='img/image-3.jpeg' width=400></img>    
     
 - 사용한 모델
     - Roberta
@@ -101,13 +101,13 @@
 
 - binary-label을 학습에 활용하고자 model의 아웃풋인 [CLS] 임베딩을 label을 예측하는 regression 모델에 입력하고, 동시에 binary-label을 예측하는 classification 모델에 입력해 두개의 아웃풋에 대해 각각의 loss를 구한 후 더한 최종 Loss를 이용해 전체를 학습하였다. 그 결과 pearson 점수의 상승은 미미했으나 학습 수렴속도는 증가하였다.
 
-<img src='img/image-4.jpeg'></img>    
+<img src='img/image-4.jpeg' width=300></img>    
 
 ### 하위 레이어를 활용하여 Fine-tuning
 
 - 하위 레이어를 활용하면 단어 단위의 세부 정보를 통해 유사도 측정에 도움이 될 것이라 생각하고, 각 레이어의 시퀀스 임베딩을 평균해 CNN으로 가중합하여 Head 입력으로 사용하였다. 그 결과 하위 레이어를 이용한 fine-tuning으로 train과 val loss가 감소하면서 소폭 상승을 얻었고, 이미 상세한 정보가 담긴 BERT 인코더 덕분에 큰 상승은 없었지만 하위 정보를 활용해 점수를 조금 상승시킬 수 있었다.
 
-<img src='img/image-5.jpeg'></img> <br>
+<img src='img/image-5.jpeg' width=350></img> <br>
 
 # 💥 실험 및 결과
 
@@ -142,7 +142,7 @@
 - 앙상블의 경우 구현하기 쉬운 모든 output.csv을 평균을 구하는 방식과, output.csv를 데이터로 활용하는 스태킹 방식을 시도하였다. 최종 결과는 아래와 같으며, 같은 평가 점수를 받았다.
     - 평가 데이터 일부에 대한 점수는 0.9284로 1등이 0.94인 비해 낮은 편이었으나, 중간 점수에 과적합 시키거나 과도한 앙상블을 하지 않았기에 최종 점수가 높아진 것으로 보인다.
 
-<img src='img/image-9.jpeg'></img>
+<img src='img/image-9.jpeg' width=600></img>
         
 ### 결과
 
